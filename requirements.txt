@@ -1,0 +1,7 @@
+ftfy
+pandas
+numpy
+string_grouper
+unidecode
+pytest
+odfpy

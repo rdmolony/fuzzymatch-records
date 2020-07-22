@@ -6,11 +6,6 @@ with open("README.md", "r") as fh:
 # base requirements
 install_requires = open("requirements.txt").read().strip().split("\n")
 
-extras = {
-    'viz': ['graphviz>=0.14']
-}
-extras["all_extras"] = sum(extras.values(), [])
-
 setup(
     name='link_records',
     packages=find_packages('src'),
