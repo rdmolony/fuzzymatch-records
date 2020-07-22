@@ -5,3 +5,11 @@ string_grouper
 unidecode
 pytest
 odfpy
+
+ipython
+ipdb
+black
+mypy
+pylink
+flake8
+pytest
