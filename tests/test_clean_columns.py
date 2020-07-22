@@ -5,7 +5,7 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 import pytest
 
-from link_records.clean_columns import clean_fuzzy_columns
+from fuzzymatch_records.clean_columns import clean_fuzzy_columns
 
 CWD = Path(__file__).parent
 DATA = CWD / "data"

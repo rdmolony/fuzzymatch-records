@@ -10,7 +10,7 @@ from string_grouper import (
 )
 
 
-from link_records.clean_columns import clean_fuzzy_columns
+from fuzzymatch_records.clean_columns import clean_fuzzy_columns
 
 
 def deduplicate_fuzzy_columns(

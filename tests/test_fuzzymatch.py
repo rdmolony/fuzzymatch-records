@@ -5,7 +5,7 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 import pytest
 
-from link_records.fuzzymatch import (
+from fuzzymatch_records.fuzzymatch import (
     replace_fuzzy_columns_with_fuzzymatched_columns,
     fuzzymerge_dataframes,
 )

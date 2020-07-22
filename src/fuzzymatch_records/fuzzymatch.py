@@ -14,7 +14,7 @@ from string_grouper import (
     group_similar_strings,
 )
 
-from link_records.clean_columns import clean_fuzzy_columns
+from fuzzymatch_records.clean_columns import clean_fuzzy_columns
 
 
 def replace_fuzzy_columns_with_fuzzymatched_columns(
