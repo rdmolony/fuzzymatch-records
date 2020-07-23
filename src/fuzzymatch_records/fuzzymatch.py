@@ -1,6 +1,10 @@
 import re
 from typing import List, Tuple
 from pathlib import Path
+from logging import Logger
+import logging
+import os
+import sys
 
 import pandas as pd
 import numpy as np
@@ -38,24 +42,11 @@ def fuzzymatch_dataframes(
     return right
 
 
-def calculate_fuzzymatches_for_min_similarity_to_file(
-    left: pd.DataFrame,
-    right: pd.DataFrame,
-    column: str,
-    min_similarity: float,
-    dirpath: Path,
-) -> None:
+def calculate_fuzzymatches_for_min_similarity(
+    left: pd.DataFrame, right: pd.DataFrame, column: str, min_similarity: float,
+) -> pd.DataFrame:
 
-    filename = "Column_" + column + " MinSim_" + str(min_similarity) + " Matches.csv"
-    filepath = dirpath / filename
+    left_clean = left[column].drop_duplicates().pipe(clean_fuzzy_column)
+    right_clean = right[column].drop_duplicates().pipe(clean_fuzzy_column)
 
-    if filepath.exists():
-        print(f"'{filepath}' already exists! Delete to recalculate...")
-    else:
-        left_clean = left[column].drop_duplicates().pipe(clean_fuzzy_column)
-        right_clean = right[column].drop_duplicates().pipe(clean_fuzzy_column)
-
-        matches = match_strings(left_clean, right_clean, min_similarity=min_similarity)
-
-        print(f"Inspect '{filepath}' to inpect min_similarity fit ...")
-        matches.to_csv(filepath, index=False)
+    return match_strings(left_clean, right_clean, min_similarity=min_similarity)

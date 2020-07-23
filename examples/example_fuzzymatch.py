@@ -50,11 +50,12 @@ if __file__ == "__main__":
     pb_name_min_sim = 0.8
     location_min_sim = 0.7
 
-    calculate_fuzzymatches_for_min_similarity_to_file(
-        left, right, column="PB Name", min_similarity=pb_name_min_sim, dirpath=CWD
+    # Use to inspect results for given min_similarity ...
+    calculate_fuzzymatches_for_min_similarity(
+        left, right, column="PB Name", min_similarity=pb_name_min_sim,
     )
-    calculate_fuzzymatches_for_min_similarity_to_file(
-        left, right, column="Location", min_similarity=location_min_sim, dirpath=CWD
+    calculate_fuzzymatches_for_min_similarity(
+        left, right, column="Location", min_similarity=location_min_sim,
     )
 
     right_fuzzymatched = fuzzymatch_dataframes(
