@@ -60,11 +60,3 @@ def test_extract_address_numbers(addresses) -> None:
     output = _extract_address_numbers(input).dropna()
     assert_equal(output.array, expected_output.array)
 
-
-# def test_parse_address_column(addresses) -> None:
-
-#     input = addresses["raw_addresses"]
-#     expected_output = addresses["parsed_addresses"]
-
-#     output = _parse_address_column(input)
-#     assert_frame_equal(output, expected_output)

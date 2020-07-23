@@ -2,9 +2,6 @@ import re
 from typing import List, Tuple
 from pathlib import Path
 
-from prefect import task
-
-
 import pandas as pd
 import numpy as np
 from string_grouper import (
@@ -13,32 +10,52 @@ from string_grouper import (
     StringGrouper,
     group_similar_strings,
 )
+import recordlinkage
 
-from fuzzymatch_records.clean_columns import clean_fuzzy_columns
+from fuzzymatch_records.clean_columns import clean_fuzzy_column, clean_fuzzy_columns
 
 
-def replace_fuzzy_columns_with_fuzzymatched_columns(
-    left: pd.DataFrame, right: pd.DataFrame, fuzzy_cols: List[str]
+def fuzzymatch_dataframes(
+    left: pd.DataFrame,
+    right: pd.DataFrame,
+    fuzzy_column_properties: List[Tuple[str, float]],
 ) -> pd.DataFrame:
 
-    for fuzzy_col in fuzzy_cols:
+    left = left.copy()
+    right = right.copy()
 
-        right[fuzzy_col + "_original"] = right[fuzzy_col]
-        right[fuzzy_col] = match_most_similar(
-            left[fuzzy_col].fillna(""), right[fuzzy_col].fillna(""), min_similarity=0.1
+    on_fuzzy, min_similarities = zip(*fuzzy_column_properties)
+
+    left = left.pipe(clean_fuzzy_columns, on_fuzzy)
+    right = right.pipe(clean_fuzzy_columns, on_fuzzy)
+
+    for fuzzy_column, min_similarity in zip(on_fuzzy, min_similarities):
+
+        right[fuzzy_column + "_fuzzymatched"] = match_most_similar(
+            left[fuzzy_column], right[fuzzy_column], min_similarity=min_similarity
         )
 
     return right
 
 
-def fuzzymerge_dataframes(
-    left: pd.DataFrame, right: pd.DataFrame, on_fuzzy: List[str], on_smooth: List[str],
-) -> pd.DataFrame:
+def calculate_fuzzymatches_for_min_similarity_to_file(
+    left: pd.DataFrame,
+    right: pd.DataFrame,
+    column: str,
+    min_similarity: float,
+    dirpath: Path,
+) -> None:
 
-    left = clean_fuzzy_columns(left, on_fuzzy)
-    right = clean_fuzzy_columns(right, on_fuzzy)
-    right = replace_fuzzy_columns_with_fuzzymatched_columns(left, right, on_fuzzy)
+    filename = "Column_" + column + " MinSim_" + str(min_similarity) + " Matches.csv"
+    filepath = dirpath / filename
 
-    merge_columns = on_fuzzy + on_smooth
+    if filepath.exists():
+        print(f"'{filepath}' already exists! Delete to recalculate...")
+    else:
+        left_clean = left[column].drop_duplicates().pipe(clean_fuzzy_column)
+        right_clean = right[column].drop_duplicates().pipe(clean_fuzzy_column)
 
-    return pd.merge(left, right, on=merge_columns)
+        matches = match_strings(left_clean, right_clean, min_similarity=min_similarity)
+
+        print(f"Inspect '{filepath}' to inpect min_similarity fit ...")
+        matches.to_csv(filepath, index=False)

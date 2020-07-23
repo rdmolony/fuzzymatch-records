@@ -3,28 +3,29 @@ from pathlib import Path
 
 import pandas as pd
 from pandas.testing import assert_frame_equal
+from numpy.testing import assert_equal, assert_almost_equal
 import pytest
 
-from fuzzymatch_records.clean_columns import clean_fuzzy_columns
+from fuzzymatch_records.clean_columns import clean_fuzzy_column, clean_fuzzy_columns
 
 CWD = Path(__file__).parent
 DATA = CWD / "data"
 
 
 @pytest.fixture
-def mnr_three() -> Dict[str, pd.DataFrame]:
+def dirty_fuzzy_data() -> Dict[str, pd.DataFrame]:
 
-    return pd.read_excel(DATA / "M&R [sample 3].ods", sheet_name=None, engine="odf")
+    return pd.read_excel(
+        DATA / "DirtyFuzzyData.ods", sheet_name=None, engine="odf", squeeze=True
+    )
 
 
-@pytest.mark.parametrize(
-    "input_key,expected_output_key", [("left", "left_clean"), ("right", "right_clean")]
-)
-def test_clean_fuzzy_columns(mnr_three, input_key, expected_output_key) -> None:
+def test_clean_fuzzy_column(dirty_fuzzy_data) -> None:
 
-    input = mnr_three[input_key]
-    expected_output = mnr_three[expected_output_key]
+    input = dirty_fuzzy_data["dirty_fuzzy_column"]
+    expected_output = dirty_fuzzy_data["clean_fuzzy_column"]
 
-    output = clean_fuzzy_columns(input, fuzzy_cols=["Location", "PB Name"])
+    output = clean_fuzzy_column(input)
 
-    assert_frame_equal(output, expected_output)
+    assert_equal(output.array, expected_output.array)
+
