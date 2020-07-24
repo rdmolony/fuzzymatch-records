@@ -5,6 +5,7 @@ string_grouper
 unidecode
 pytest
 odfpy
+icontract
 
 ipython
 ipdb

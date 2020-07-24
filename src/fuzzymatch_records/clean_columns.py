@@ -1,10 +1,13 @@
 from typing import List
 
 import pandas as pd
+import icontract
 from ftfy import fix_text
 from unidecode import unidecode
 
 
+@icontract.require(lambda series: isinstance(series, pd.Series))
+@icontract.require(lambda series: not series.empty)
 def clean_fuzzy_column(series: pd.Series) -> pd.Series:
 
     return (
