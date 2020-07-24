@@ -1,5 +1,6 @@
 from typing import List, Tuple
 
+import icontract
 import pandas as pd
 import numpy as np
 from string_grouper import (
@@ -13,29 +14,38 @@ from string_grouper import (
 from fuzzymatch_records.clean_columns import clean_fuzzy_columns
 
 
-def deduplicate_dataframe(
-    df: pd.DataFrame, fuzzy_column_properties: List[Tuple[str, float]],
+@icontract.require(lambda df: isinstance(df, pd.DataFrame))
+def deduplicate_dataframe_columns(
+    df: pd.DataFrame, columns: List[str], min_similarities: List[float],
 ) -> pd.DataFrame:
+    """Deduplicates columns for according to the min_similarity specified for 
+    each column.
 
-    on_fuzzy, min_similarities = zip(*fuzzy_column_properties)
+    Example
+    -------
+    deduplicate_dataframe_columns(df, ['company_name', 'address'], [0.9, 0.6])
+    0.9 represents the minimum allowable (cossine) similarity between the
+    'company_name' rows to define them as duplicates
 
-    df = df.copy().pipe(clean_fuzzy_columns, on_fuzzy)
+    See https://github.com/Bergvca/string_grouper for more information on 
+    fuzzy matching
 
-    for fuzzy_column, min_similarity in zip(on_fuzzy, min_similarities):
+    Parameters
+    ----------
+    df : pd.DataFrame
+    columns : List[str]
+    min_similarities : List[float]
 
-        df[fuzzy_column + "_deduplicated"] = group_similar_strings(
-            df[fuzzy_column], min_similarity=min_similarity
+    Returns
+    -------
+    pd.DataFrame
+    """
+    df = df.copy().pipe(clean_fuzzy_columns, columns)
+
+    for column, min_similarity in zip(columns, min_similarities):
+
+        df[column + "_deduplicated"] = group_similar_strings(
+            df[column], min_similarity=min_similarity
         )
 
     return df
-
-
-# def deduplicate_dataframe_via_string_grouper(
-#     df: pd.DataFrame, fuzzy_columns: List[Tuple[str]],
-# ):
-
-#     columns, types = zip(*fuzzy_columns)
-#     df = clean_fuzzy_columns(df, columns)
-
-#     deduplicate_fuzzy_columns(df, columns, types)
-
