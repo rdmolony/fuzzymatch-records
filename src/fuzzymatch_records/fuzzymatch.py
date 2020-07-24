@@ -25,13 +25,10 @@ def fuzzymatch_dataframes(
     fuzzy_column_properties: List[Tuple[str, float]],
 ) -> pd.DataFrame:
 
-    left = left.copy()
-    right = right.copy()
-
     on_fuzzy, min_similarities = zip(*fuzzy_column_properties)
 
-    left = left.pipe(clean_fuzzy_columns, on_fuzzy)
-    right = right.pipe(clean_fuzzy_columns, on_fuzzy)
+    left = left.copy().pipe(clean_fuzzy_columns, on_fuzzy)
+    right = right.copy().pipe(clean_fuzzy_columns, on_fuzzy)
 
     for fuzzy_column, min_similarity in zip(on_fuzzy, min_similarities):
 

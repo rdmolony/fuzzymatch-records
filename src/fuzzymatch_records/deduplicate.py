@@ -13,11 +13,21 @@ from string_grouper import (
 from fuzzymatch_records.clean_columns import clean_fuzzy_columns
 
 
-def deduplicate_column(df: pd.DataFrame,):
+def deduplicate_dataframe(
+    df: pd.DataFrame, fuzzy_column_properties: List[Tuple[str, float]],
+) -> pd.DataFrame:
 
-    df[fuzzy_col + "_before_deduplication"] = df[fuzzy_col]
-    # df[fuzzy_col] = match_strings(df[fuzzy_col])
-    df[fuzzy_col] = group_similar_strings(df[fuzzy_col])
+    on_fuzzy, min_similarities = zip(*fuzzy_column_properties)
+
+    df = df.copy().pipe(clean_fuzzy_columns, on_fuzzy)
+
+    for fuzzy_column, min_similarity in zip(on_fuzzy, min_similarities):
+
+        df[fuzzy_column + "_deduplicated"] = group_similar_strings(
+            df[fuzzy_column], min_similarity=min_similarity
+        )
+
+    return df
 
 
 # def deduplicate_dataframe_via_string_grouper(
