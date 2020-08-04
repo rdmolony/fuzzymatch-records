@@ -50,6 +50,9 @@ def remove_dublin_postcodes(df: pd.DataFrame, address_column: str) -> pd.DataFra
     -------
     pd.DataFrame
     """
+
+    df = df.copy().drop(columns=address_column)
+
     return df.assign(
         **{
             address_column: df[address_column]
