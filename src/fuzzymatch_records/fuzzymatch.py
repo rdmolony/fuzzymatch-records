@@ -35,8 +35,9 @@ def fuzzymatch_dataframes(
     on_fuzzy_right: List[str] = None,
     min_similarities: List[float] = None,
 ) -> pd.DataFrame:
-    """Appends fuzzymatched columns from 'left' to 'right' DataFrames
-    according to the min_similarity specified for each column.
+    """Fuzzymatches columns from 'left' to 'right' DataFrames
+    according to the min_similarity specified for each column and replaces 
+    the original columns in 'right' with the fuzzymatch result.
 
     Example
     -------
@@ -68,7 +69,7 @@ def fuzzymatch_dataframes(
 
         for fuzzy_column, min_similarity in zip(on_fuzzy, min_similarities):
 
-            right[fuzzy_column + "_fuzzymatched"] = match_most_similar(
+            right[fuzzy_column] = match_most_similar(
                 left[fuzzy_column], right[fuzzy_column], min_similarity=min_similarity
             )
 
@@ -81,9 +82,7 @@ def fuzzymatch_dataframes(
             on_fuzzy_left, on_fuzzy_right, min_similarities,
         ):
 
-            right[
-                fuzzy_column_right + "_fuzzymatched_to_" + fuzzy_column_left
-            ] = match_most_similar(
+            right[fuzzy_column_right] = match_most_similar(
                 left[fuzzy_column_left],
                 right[fuzzy_column_right],
                 min_similarity=min_similarity,
