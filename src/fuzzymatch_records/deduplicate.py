@@ -18,8 +18,8 @@ from fuzzymatch_records.clean_columns import clean_fuzzy_columns
 def deduplicate_dataframe_columns(
     df: pd.DataFrame, columns: List[str], min_similarities: List[float],
 ) -> pd.DataFrame:
-    """Deduplicates columns for according to the min_similarity specified for 
-    each column.
+    """Deduplicates columns in-place for according to the min_similarity 
+    specified for each column.
 
     Example
     -------
@@ -44,8 +44,6 @@ def deduplicate_dataframe_columns(
 
     for column, min_similarity in zip(columns, min_similarities):
 
-        df[column + "_deduplicated"] = group_similar_strings(
-            df[column], min_similarity=min_similarity
-        )
+        df[column] = group_similar_strings(df[column], min_similarity=min_similarity)
 
     return df
