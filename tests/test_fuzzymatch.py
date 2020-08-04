@@ -41,17 +41,23 @@ def test_calculate_fuzzymatches_for_min_similarity_succeeds(
     )
 
 
-@pytest.fixture
-def example_dataset() -> Dict[str, pd.DataFrame]:
+@pytest.fixture(
+    scope="module",
+    params=[
+        "FuzzyMatchOnSameFuzzyColumns.ods",
+        "FuzzyMatchOnDifferentFuzzyColumns.ods",
+    ],
+)
+def data_to_fuzzymatch(request) -> Dict[str, pd.DataFrame]:
 
-    return pd.read_excel(DATA / "ExampleDataset.ods", sheet_name=None, engine="odf")
+    return pd.read_excel(DATA / request.param, sheet_name=None, engine="odf")
 
 
 @pytest.mark.parametrize("min_similarity", [(0, 0), (0.5, 0.5), (1, 1)])
-def test_fuzzymatch_dataframes_on_data(example_dataset, min_similarity) -> None:
+def test_fuzzymatch_dataframes_on_data(data_to_fuzzymatch, ref, min_similarity) -> None:
 
-    left = example_dataset["left"]
-    right = example_dataset["right"]
+    left = data_to_fuzzymatch["left"]
+    right = data_to_fuzzymatch["right"]
 
     fuzzymatch_dataframes(
         left, right, on_fuzzy=["PB Name", "Location"], min_similarities=min_similarity,
