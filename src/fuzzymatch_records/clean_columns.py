@@ -15,7 +15,7 @@ def clean_fuzzy_column(series: pd.Series) -> pd.Series:
         .apply(fix_text)
         .apply(unidecode)
         .str.replace("&", "and")
-        .str.replace(r"[,-./]|\sBD", " ")
+        .str.replace(r"[,.]|\sBD", " ")
         .str.replace("  ", " ")
         .str.title()
         .str.pad(width=1, side="both", fillchar=" ")
