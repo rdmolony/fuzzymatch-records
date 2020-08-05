@@ -23,35 +23,11 @@ def extract_dublin_postcodes(df: pd.DataFrame, column: str) -> pd.DataFrame:
     -------
     pd.DataFrame
     """
+
     return df.assign(extracted_postcodes=df[column].pipe(_extract_dublin_postcodes))
 
 
-def remove_dublin_postcodes(df: pd.DataFrame, address_column: str) -> pd.DataFrame:
-    """Removes Dublin postcodes in-place from specified address column
-
-    return series.str.replace(pat=r"(dublin \d+\w?)", repl="", flags=IGNORECASE)
-
-    Returns
-    -------
-    pd.DataFrame
-    """
-
-    df = df.copy().drop(columns=address_column)
-
-    return df.assign(
-        **{
-            address_column: df[address_column]
-            .pipe(_remove_dublin_postcodes)
-            .astype(str)
-        }
-    )
-
-
 def _extract_address_numbers(series: pd.Series) -> pd.Series:
-
-    import ipdb
-
-    ipdb.set_trace()
 
     pattern = """
     (
