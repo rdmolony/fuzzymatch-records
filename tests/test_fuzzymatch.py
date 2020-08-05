@@ -15,53 +15,53 @@ CWD = Path(__file__).parent
 DATA = CWD / "data"
 
 
-@pytest.fixture(params=["CompaniesFuzzyMatches", "AddressesFuzzyMatches"])
-def fuzzymatched_data(request) -> Dict[str, pd.DataFrame]:
+# @pytest.fixture(params=["CompaniesFuzzyMatches", "AddressesFuzzyMatches"])
+# def fuzzymatched_data(request) -> Dict[str, pd.DataFrame]:
 
-    return pd.read_excel(DATA / f"{request.param}.ods", sheet_name=None, engine="odf")
-
-
-@pytest.mark.parametrize("min_similarity", [0, 0.5, 1])
-@pytest.mark.parametrize(
-    "input_sheet, output_sheet",
-    [
-        ("fuzzymatches", "fuzzymatches_result"),
-        ("not_fuzzymatches", "not_fuzzymatches_result"),
-    ],
-)
-def test_calculate_fuzzymatches_for_min_similarity_succeeds(
-    fuzzymatched_data, input_sheet, output_sheet, min_similarity
-) -> None:
-
-    input = fuzzymatched_data[input_sheet]
-    left, right = input["left"], input["right"]
-
-    calculate_fuzzymatches_for_min_similarity(
-        left, right, left_on="left", right_on="right", min_similarity=0
-    )
+#     return pd.read_excel(DATA / f"{request.param}.ods", sheet_name=None, engine="odf")
 
 
-@pytest.fixture(
-    scope="module",
-    params=[
-        "FuzzyMatchOnSameFuzzyColumns.ods",
-        "FuzzyMatchOnDifferentFuzzyColumns.ods",
-    ],
-)
-def data_to_fuzzymatch(request) -> Dict[str, pd.DataFrame]:
+# @pytest.mark.parametrize("min_similarity", [0, 0.5, 1])
+# @pytest.mark.parametrize(
+#     "input_sheet, output_sheet",
+#     [
+#         ("fuzzymatches", "fuzzymatches_result"),
+#         ("not_fuzzymatches", "not_fuzzymatches_result"),
+#     ],
+# )
+# def test_calculate_fuzzymatches_for_min_similarity_succeeds(
+#     fuzzymatched_data, input_sheet, output_sheet, min_similarity
+# ) -> None:
 
-    return pd.read_excel(DATA / request.param, sheet_name=None, engine="odf")
+#     input = fuzzymatched_data[input_sheet]
+#     left, right = input["left"], input["right"]
+
+#     calculate_fuzzymatches_for_min_similarity(
+#         left, right, left_on="left", right_on="right", min_similarity=0
+#     )
 
 
-@pytest.mark.parametrize("min_similarity", [(0, 0), (0.5, 0.5), (1, 1)])
-def test_fuzzymatch_dataframes_on_data(data_to_fuzzymatch, ref, min_similarity) -> None:
+# @pytest.fixture(
+#     scope="module",
+#     params=[
+#         "FuzzyMatchOnSameFuzzyColumns.ods",
+#         "FuzzyMatchOnDifferentFuzzyColumns.ods",
+#     ],
+# )
+# def data_to_fuzzymatch(request) -> Dict[str, pd.DataFrame]:
 
-    left = data_to_fuzzymatch["left"]
-    right = data_to_fuzzymatch["right"]
+#     return pd.read_excel(DATA / request.param, sheet_name=None, engine="odf")
 
-    fuzzymatch_dataframes(
-        left, right, on_fuzzy=["PB Name", "Location"], min_similarities=min_similarity,
-    )
+
+# @pytest.mark.parametrize("min_similarity", [(0, 0), (0.5, 0.5), (1, 1)])
+# def test_fuzzymatch_dataframes_on_data(data_to_fuzzymatch, ref, min_similarity) -> None:
+
+#     left = data_to_fuzzymatch["left"]
+#     right = data_to_fuzzymatch["right"]
+
+#     fuzzymatch_dataframes(
+#         left, right, on_fuzzy=["PB Name", "Location"], min_similarities=min_similarity,
+#     )
 
 
 @pytest.fixture

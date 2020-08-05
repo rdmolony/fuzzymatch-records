@@ -25,6 +25,6 @@ def clean_fuzzy_column(series: pd.Series) -> pd.Series:
 def clean_fuzzy_columns(df: pd.DataFrame, fuzzy_cols: List[str]) -> pd.DataFrame:
 
     for fuzzy_column in fuzzy_cols:
-        df.loc[:, fuzzy_column] = clean_fuzzy_column(df[fuzzy_column])
+        df.loc[:, fuzzy_column] = df[fuzzy_column].copy().pipe(clean_fuzzy_column)
 
     return df
